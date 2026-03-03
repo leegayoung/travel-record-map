@@ -7,8 +7,8 @@ import com.travelrecord.web.common.exception.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -40,7 +40,14 @@ public class UserLookupAdapter implements UserLookupPort {
     public UserDetailResponse findUserDetailByEmail(String email) {
         String url = userServiceUrl + "/api/internal/users/by-email/" + email;
         try {
-            ResponseEntity<ApiResponse<UserDetailResponse>> response = restTemplate.getForEntity(url, (Class<ApiResponse<UserDetailResponse>>)(Class<?>)ApiResponse.class);
+
+          ResponseEntity<ApiResponse<UserDetailResponse>> response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<ApiResponse<UserDetailResponse>>() {}
+          );
+
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null && response.getBody().getData() != null) {
                 return response.getBody().getData();
             } else {

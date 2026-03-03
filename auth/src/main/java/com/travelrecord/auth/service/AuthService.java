@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
+  private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserLookupPort userLookupPort; // User 서비스와의 통신을 위한 Port
 
     @Transactional
     public void signup(AuthDto.SignupRequest request) {
-        // User 서비스에 회원가입 요청 위임
-        userLookupPort.requestSignup(request);
+      String encodedPassword = passwordEncoder.encode(request.getPassword());
+      request.setPassword(encodedPassword);
+      userLookupPort.requestSignup(request);
     }
 
     @Transactional
