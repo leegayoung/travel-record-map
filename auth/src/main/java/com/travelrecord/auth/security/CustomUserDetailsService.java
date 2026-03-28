@@ -1,6 +1,9 @@
 package com.travelrecord.auth.security;
 
 import com.travelrecord.auth.security.UserLookupPort.UserDetailResponse;
+import com.travelrecord.common.security.dto.UserDetailsDto;
+import com.travelrecord.web.common.exception.CustomException;
+import com.travelrecord.web.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

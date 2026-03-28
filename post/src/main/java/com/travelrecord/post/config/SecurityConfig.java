@@ -1,7 +1,7 @@
 package com.travelrecord.post.config;
 
-import com.travelrecord.post.security.JwtAuthenticationFilter;
-import com.travelrecord.post.security.JwtTokenProvider;
+import com.travelrecord.common.security.filter.JwtAuthenticationFilter;
+import com.travelrecord.common.security.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
 package com.travelrecord.user.service;
 
-import com.travelrecord.sec.dto.UserDetailsDto;
-import com.travelrecord.sec.service.UserDetailsLoader;
+import com.travelrecord.common.security.dto.UserDetailsDto;
+import com.travelrecord.common.security.service.UserDetailsLoader;
 import com.travelrecord.user.domain.User;
 import com.travelrecord.user.repository.UserRepository;
 import com.travelrecord.web.common.exception.*;

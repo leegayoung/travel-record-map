@@ -2,7 +2,8 @@ package com.travelrecord.auth.service;
 
 import com.travelrecord.auth.dto.AuthDto;
 import com.travelrecord.auth.security.UserLookupPort; // UserLookupPort 임포트
-import com.travelrecord.auth.security.JwtTokenProvider;
+import com.travelrecord.common.security.dto.UserDetailsDto;
+import com.travelrecord.common.security.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -36,7 +37,7 @@ public class AuthService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtTokenProvider.createToken(authentication);
+        String accessToken = jwtTokenProvider.createToken((UserDetailsDto) authentication);
         return new AuthDto.TokenResponse(accessToken);
     }
 }

@@ -1,14 +1,14 @@
 rootProject.name = 'travel-record-map'
 
-// 서비스 모듈
+include 'common-core'
+include 'common-security'
+include 'common-kafka'
+include 'web-common'
+include 'persistence-common'
+
 include 'user'
 include 'post'
 include 'region'
 include 'auth'
-
-// 공통 모듈
-include 'common-core'
-include 'common-security'
-include 'web-common'
-include 'persistence-common'
-
+include 'group'
+include 'test'

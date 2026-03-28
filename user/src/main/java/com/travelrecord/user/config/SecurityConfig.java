@@ -1,15 +1,13 @@
 package com.travelrecord.user.config;
 
-import com.travelrecord.user.security.JwtAuthenticationFilter;
-import com.travelrecord.user.security.JwtTokenProvider;
+import com.travelrecord.common.security.filter.JwtAuthenticationFilter;
+import com.travelrecord.common.security.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // 추가된 import는 그대로 둡니다.
-import org.springframework.security.crypto.password.PasswordEncoder; // 추가된 import는 그대로 둡니다.
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 

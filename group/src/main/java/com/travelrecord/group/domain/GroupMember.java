@@ -1,7 +1,6 @@
 package com.travelrecord.group.domain;
 
 import com.travelrecord.common.domain.BaseEntity;
-import com.travelrecord.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -42,17 +41,16 @@ public class GroupMember extends BaseEntity {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Enumerated(EnumType.STRING)
     private GroupRole role;
 
     @Builder
-    public GroupMember(Group group, User user, GroupRole role) {
+    public GroupMember(Group group, Long userId, GroupRole role) {
         this.group = group;
-        this.user = user;
+        this.userId = userId;
         this.role = role;
     }
 }

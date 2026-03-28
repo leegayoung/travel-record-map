@@ -1,0 +1,17 @@
+package com.travelrecord.user.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseEvent {
+    private String requestId;
+    private Long userId;
+    private String name;
+    private String email;
+}

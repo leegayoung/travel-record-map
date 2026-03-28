@@ -13,10 +13,13 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/auth" />
             <option value="$PROJECT_DIR$/common-core" />
+            <option value="$PROJECT_DIR$/common-kafka" />
             <option value="$PROJECT_DIR$/common-security" />
+            <option value="$PROJECT_DIR$/group" />
             <option value="$PROJECT_DIR$/persistence-common" />
             <option value="$PROJECT_DIR$/post" />
             <option value="$PROJECT_DIR$/region" />
+            <option value="$PROJECT_DIR$/test" />
             <option value="$PROJECT_DIR$/user" />
             <option value="$PROJECT_DIR$/web-common" />
           </set>

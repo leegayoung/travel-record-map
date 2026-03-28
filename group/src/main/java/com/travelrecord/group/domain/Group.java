@@ -1,7 +1,6 @@
 package com.travelrecord.group.domain;
 
-import com.travelrecord.common.domain.BaseEntity;
-import com.travelrecord.user.domain.User;
+import com.travelrecord.persistence.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,14 +31,13 @@ public class Group extends BaseEntity {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_user_id")
-    private User createdBy; // 그룹 생성자
+    @Column(name = "created_by_user_id", nullable = false)
+    private Long createdByUserId; // 그룹 생성자
 
     @Builder
-    public Group(String name, String description, User createdBy) {
+    public Group(String name, String description, Long createdByUserId) {
         this.name = name;
         this.description = description;
-        this.createdBy = createdBy;
+        this.createdByUserId = createdByUserId;
     }
 }

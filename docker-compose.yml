@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - travel-network
+
+  # Kafka
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - travel-network
+
+  # Region Service
+  region-service:
+    build:
+      context: .
+      dockerfile: region/Dockerfile
+    container_name: region-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - travel-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    container_name: auth-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - APP_SERVICES_USER_URL=http://user-service:8085
+    networks:
+      - travel-network
+
+  # Post Service
+  post-service:
+    build:
+      context: .
+      dockerfile: post/Dockerfile
+    container_name: post-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - kafka
+      - region-service
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - travel-network
+
+  # User Service
+  user-service:
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    container_name: user-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - travel-network
+
+  # Group Service
+  group-service:
+    build:
+      context: .
+      dockerfile: group/Dockerfile
+    container_name: group-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - travel-network
+
+networks:
+  travel-network:
+    driver: bridge
