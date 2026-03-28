@@ -36,7 +36,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 }
 bootJar {
-    enabled = false
+    enabled = true
 }
 
 jar {
