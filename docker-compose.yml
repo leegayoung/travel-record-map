@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Zookeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -10,7 +9,6 @@ services:
     networks:
       - travel-network
 
-  # Kafka
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
@@ -26,11 +24,11 @@ services:
     networks:
       - travel-network
 
-  # Region Service
   region-service:
     build:
       context: .
-      dockerfile: region/Dockerfile
+      args:
+        SERVICE_NAME: region
     container_name: region-service
     ports:
       - "8081:8081"
@@ -41,11 +39,11 @@ services:
     networks:
       - travel-network
 
-  # Auth Service
   auth-service:
     build:
       context: .
-      dockerfile: auth/Dockerfile
+      args:
+        SERVICE_NAME: auth
     container_name: auth-service
     ports:
       - "8083:8083"
@@ -57,11 +55,11 @@ services:
     networks:
       - travel-network
 
-  # Post Service
   post-service:
     build:
       context: .
-      dockerfile: post/Dockerfile
+      args:
+        SERVICE_NAME: post
     container_name: post-service
     ports:
       - "8084:8084"
@@ -73,11 +71,11 @@ services:
     networks:
       - travel-network
 
-  # User Service
   user-service:
     build:
       context: .
-      dockerfile: user/Dockerfile
+      args:
+        SERVICE_NAME: user
     container_name: user-service
     ports:
       - "8085:8085"
@@ -88,11 +86,11 @@ services:
     networks:
       - travel-network
 
-  # Group Service
   group-service:
     build:
       context: .
-      dockerfile: group/Dockerfile
+      args:
+        SERVICE_NAME: group
     container_name: group-service
     ports:
       - "8086:8086"
