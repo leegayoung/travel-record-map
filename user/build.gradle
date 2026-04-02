@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
-    id 'java'
+    id 'java-library' // MSA 서비스 모듈 간 의존성 관리를 위해 java-library 권장
 }
 
 group = 'com.travelrecord'
@@ -10,35 +10,71 @@ version = '0.0.1-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+
 dependencies {
+    // 1. 공통 모듈 의존성
     implementation project(':common-core')
     implementation project(':common-security')
     implementation project(':web-common')
-    implementation project(':persistence-common')
+    implementation project(':common-persistence')
+    implementation project(':common-kafka') // Kafka 공통 모듈
 
-    implementation project(':common-kafka')
-
+    // 2. Spring Boot Starters & Kafka
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
     implementation 'org.springframework.kafka:spring-kafka'
 
-    // JWT 추가
+    // 3. JWT (Spring Boot 3.x 호환)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // Swagger
+    // 4. QueryDSL (Jakarta EE 10 대응 핵심 설정)
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+
+    // 5. 컴파일 시점 Jakarta API 의존성 (QClass 생성용)
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+
+    // 6. Swagger / OpenAPI 3
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
+    // 7. Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Runtime DB (필요 시 추가, 보통 persistence 모듈 설정을 따름)
+    runtimeOnly 'com.h2database:h2'
 }
+
+// --- QueryDSL QClass 생성 설정 ---
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+sourceSets {
+    main {
+        java {
+            srcDirs += [querydslDir]
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // Annotation Processor가 생성하는 소스 파일 경로 명시
+    options.getGeneratedSourceOutputDirectory().set(querydslDir)
+}
+
+clean {
+    delete querydslDir
+}
+
+// --- MSA 빌드 설정 ---
 bootJar {
     enabled = true
+    archiveFileName = "app.jar" // Docker에서 찾기 쉽게 파일명 고정
 }
 
 jar {
-    enabled = true
+    enabled = false // Plain JAR 생성 안 함
 }

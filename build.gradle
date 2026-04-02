@@ -1,6 +1,7 @@
 plugins {
     id "org.springframework.boot" version "3.2.2" apply false
     id "io.spring.dependency-management" version "1.1.4"
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
 }
 
 allprojects {
@@ -46,46 +47,3 @@ subprojects {
         useJUnitPlatform()
     }
 }
-
-/*
-plugins {
-    id "org.springframework.boot" version "3.2.2"
-    id "io.spring.dependency-management" version "1.0.1.RELEASE"
-    id 'java'
-}
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
-
-subprojects {
-    apply plugin: "java"
-
-    group = "org.travel-record-map"
-    version = "1.0-SNAPSHOT"
-
-    java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
-        }
-    }
-
-    dependencies {
-        compileOnly "org.projectlombok:lombok:1.18.32"
-        annotationProcessor "org.projectlombok:lombok:1.18.32"
-
-        testCompileOnly "org.projectlombok:lombok:1.18.32"
-        testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
-    }
-
-    tasks.named("test") {
-        useJUnitPlatform()
-    }
-
-}*/

@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    // QueryDSL 플러그인을 상위에서 가져오거나 여기서 선언 (최근 방식 추천)
+}
+
+dependencies {
+    // 1. 핵심 JPA 의존성 (api를 사용하여 상위 모듈에 전파)
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // 2. QueryDSL 설정 (Jakarta 대응)
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+
+    // 3. Jakarta Annotation Processor (컴파일 시점에 필요)
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    runtimeOnly 'com.h2database:h2'
+}
+
+// QueryDSL QClass 생성 경로 설정
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+sourceSets {
+    main {
+        java {
+            srcDirs += [querydslDir]
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(querydslDir)
+}
+
+clean {
+    delete querydslDir
+}

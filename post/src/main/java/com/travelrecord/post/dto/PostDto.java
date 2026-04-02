@@ -29,6 +29,11 @@ public class PostDto {
         private String emotion;
     }
 
+    @Getter @Setter
+    public static class UpdateMainDisplayRequest {
+        private Boolean mainDisplay;
+    }
+
     @Getter
     public static class Response {
         private Long id;

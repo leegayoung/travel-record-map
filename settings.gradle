@@ -4,7 +4,7 @@ include 'common-core'
 include 'common-security'
 include 'common-kafka'
 include 'web-common'
-include 'persistence-common'
+include 'common-persistence'
 
 include 'user'
 include 'post'

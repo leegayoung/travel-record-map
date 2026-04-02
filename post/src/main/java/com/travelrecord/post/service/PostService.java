@@ -5,6 +5,8 @@ import com.travelrecord.post.dto.PostDto;
 import com.travelrecord.post.repository.PostRepository;
 import com.travelrecord.post.application.port.out.RegionValidatorPortOut; // Post 모듈의 Outbound Port 임포트
 import com.travelrecord.web.common.exception.*;
+import org.springframework.data.domain.Page; // Added import
+import org.springframework.data.domain.Pageable; // Added import
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final RegionValidatorPortOut regionValidatorPortOut; // Post 모듈의 Outbound Port 주입
+    // private final RegionValidatorPortOut regionValidatorPortOut; // Post 모듈의 Outbound Port 주입
 
     @Transactional
     public Long createPost(PostDto.CreateRequest request) {
@@ -28,7 +30,7 @@ public class PostService {
         Long currentUserId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
 
         // Region 서비스 API 호출을 통한 regionCode 유효성 검증
-        regionValidatorPortOut.validateRegionCode(request.getRegionCode());
+        // regionValidatorPortOut.validateRegionCode(request.getRegionCode());
 
         String imageKey = mapImageKeyByRegionCode(request.getRegionCode());
 
@@ -39,6 +41,7 @@ public class PostService {
                 .content(request.getContent())
                 .emotion(request.getEmotion())
                 .userId(currentUserId) // 생성자 ID 저장
+                .mainDisplay(false)
                 .build();
 
         return postRepository.save(post).getId();
@@ -66,6 +69,24 @@ public class PostService {
         return postRepository.findAll().stream()
                 .map(PostDto.Response::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostDto.Response> getMyPostsByMainDisplay(Boolean mainDisplay, Pageable pageable) {
+        Long currentUserId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        Page<Post> posts = postRepository.findPosts(currentUserId, mainDisplay, pageable);
+        return posts.map(PostDto.Response::new);
+    }
+
+    @Transactional
+    public void updatePostMainDisplayStatus(Long postId, PostDto.UpdateMainDisplayRequest request) {
+        Post post = findPostById(postId);
+        Long currentUserId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (!post.getUserId().equals(currentUserId)) {
+            throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+        post.setMainDisplay(request.getMainDisplay());
     }
 
     @Transactional

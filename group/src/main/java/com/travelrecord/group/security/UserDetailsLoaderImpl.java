@@ -1,12 +1,10 @@
-package com.travelrecord.post.security;
-
-import org.springframework.stereotype.Service;
+package com.travelrecord.group.security;
 
 import com.travelrecord.common.security.dto.UserDetailsDto;
 import com.travelrecord.common.security.service.UserDetailsLoader;
-import com.travelrecord.post.adapter.UserClient;
-
+import com.travelrecord.group.adapter.UserClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

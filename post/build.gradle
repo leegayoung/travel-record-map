@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
-    id 'java'
+    id 'java' // 서비스 모듈이므로 java-library 대신 java 권장
 }
 
 group = 'com.travelrecord'
@@ -11,39 +11,87 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.3"
-    }
+// Spring Cloud 버전 관리 (OpenFeign 및 로드밸런싱 대응)
+ext {
+    set('springCloudVersion', "2023.0.0")
 }
 
 dependencies {
+    // 1. 공통 모듈 의존성
     implementation project(':web-common')
-    implementation project(':persistence-common')
+    implementation project(':common-persistence')
     implementation project(':common-core')
     implementation project(':common-security')
-
     implementation project(':region')
 
+    // 2. Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // JWT (토큰 검증만 필요하므로 생성 의존성은 제외)
+    // 3. Spring Cloud (OpenFeign, LoadBalancer)
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
+
+    // 4. JWT (토큰 처리용)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // Swagger
+    // 5. QueryDSL (Jakarta EE 대응 필수 설정)
+    // :jakarta 분류자가 빠지면 javax 관련 NoClassDefFoundError가 발생합니다.
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+
+    // 6. QClass 생성을 위한 Jakarta API 명시
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+
+    // 7. Swagger / OpenAPI 3
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
-
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
+    // 8. Lombok & DB
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2' // 로컬 테스트용 H2
+
+    // Kafka (포스팅 시 알림이나 로그 처리를 위해 필요할 경우)
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
-bootJar { enabled = true }
-jar { enabled = false }
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+// --- QueryDSL QClass 생성 및 빌드 설정 ---
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+sourceSets {
+    main {
+        java {
+            srcDirs += [querydslDir]
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // 생성된 소스 코드의 출력 디렉토리를 지정
+    options.getGeneratedSourceOutputDirectory().set(querydslDir)
+}
+
+// clean 태스크 시 생성된 Q파일들도 함께 삭제
+clean {
+    delete querydslDir
+}
+
+// --- MSA 빌드 및 Docker 대응 설정 ---
+bootJar {
+    enabled = true
+    archiveFileName = "app.jar"
+}
+
+jar {
+    enabled = false
+}

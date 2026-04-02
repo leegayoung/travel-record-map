@@ -1,6 +1,6 @@
 package com.travelrecord.user.domain;
 
-import com.travelrecord.persistence.common.BaseEntity;
+import com.travelrecord.common.persistence.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

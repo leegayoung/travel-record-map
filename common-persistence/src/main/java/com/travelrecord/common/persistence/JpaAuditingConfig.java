@@ -1,9 +1,10 @@
-package com.travelrecord.persistence.common;
+package com.travelrecord.common.persistence;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@Configuration
+@AutoConfiguration
 @EnableJpaAuditing
 public class JpaAuditingConfig {
 }

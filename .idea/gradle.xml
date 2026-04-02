@@ -14,9 +14,9 @@
             <option value="$PROJECT_DIR$/auth" />
             <option value="$PROJECT_DIR$/common-core" />
             <option value="$PROJECT_DIR$/common-kafka" />
+            <option value="$PROJECT_DIR$/common-persistence" />
             <option value="$PROJECT_DIR$/common-security" />
             <option value="$PROJECT_DIR$/group" />
-            <option value="$PROJECT_DIR$/persistence-common" />
             <option value="$PROJECT_DIR$/post" />
             <option value="$PROJECT_DIR$/region" />
             <option value="$PROJECT_DIR$/test" />
